@@ -100,7 +100,6 @@ class ChatActivity : AppCompatActivity() {
                     adapter.notifyDataSetChanged()
 
                 }
-
                 override fun onCancelled(error: DatabaseError) {
 
                 }
@@ -115,7 +114,6 @@ class ChatActivity : AppCompatActivity() {
 
                 messageEditText.setError("Enter message")
             } else {
-
                 firebaseDatabase.child("chats").child(senderRoom!!).child("messages").push()
                     .setValue(messageObject).addOnSuccessListener {
                         firebaseDatabase.child("chats").child(receiverRoom!!).child("messages")
