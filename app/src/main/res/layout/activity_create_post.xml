@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/lite_blue"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context=".Activity.CreatePostActivity">
+
+    <RelativeLayout
+        android:layout_margin="13dp"
+        android:layout_width="wrap_content"
+        android:layout_height="400dp">
+
+        <EditText
+            android:id="@+id/post_editText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/edittext_bg"
+            android:gravity="top"
+            android:hint=" What do you want to talk about??"
+            android:padding="5dp" />
+
+<!--        <ImageView-->
+<!--            android:id="@+id/post_attach_image"-->
+<!--            android:layout_marginBottom="5dp"-->
+<!--            android:layout_marginRight="10dp"-->
+<!--            android:layout_alignParentRight="true"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            android:src="@drawable/ic_add_24"-->
+<!--            app:tint="@color/black"-->
+<!--            android:layout_width="40dp"-->
+<!--            android:layout_height="30dp"/>-->
+        <TextView
+            android:id="@+id/post_add_image_textview"
+            android:textColor="@color/black"
+            android:textAlignment="center"
+            android:textSize="22sp"
+            android:padding="3dp"
+            android:layout_alignParentBottom="true"
+            android:text="Add image "
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/post_setImage"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/post_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        app:backgroundTint="@null"
+        android:background="@drawable/button_bg"
+        android:text="post"/>
+
+
+</LinearLayout>
