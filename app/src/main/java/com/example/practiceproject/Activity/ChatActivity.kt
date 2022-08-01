@@ -38,7 +38,6 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var firebaseDatabase: DatabaseReference
     private var storage: FirebaseStorage? = null
 
-
     private lateinit var list: ArrayList<ChatModel>
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ChatAdapter
