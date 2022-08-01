@@ -45,8 +45,6 @@ class ChatActivity : AppCompatActivity() {
 
     private lateinit var attachFile: ImageView
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
