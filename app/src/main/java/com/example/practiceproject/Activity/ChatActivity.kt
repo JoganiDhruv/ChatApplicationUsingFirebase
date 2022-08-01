@@ -70,7 +70,6 @@ class ChatActivity : AppCompatActivity() {
         senderRoom = receiverUid + senderUid
         receiverRoom = senderUid + receiverUid
 
-
         //Attach file click event
         attachFile.setOnClickListener {
 
