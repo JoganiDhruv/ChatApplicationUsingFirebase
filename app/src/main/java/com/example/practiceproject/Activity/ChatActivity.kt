@@ -1,8 +1,11 @@
 package com.example.practiceproject.Activity
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.webkit.MimeTypeMap
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -37,6 +40,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firebaseDatabase: DatabaseReference
     private var storage: FirebaseStorage? = null
+    private lateinit var storageReference : StorageReference
 
     private lateinit var list: ArrayList<ChatModel>
     private lateinit var recyclerView: RecyclerView
@@ -57,6 +61,7 @@ class ChatActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
         firebaseDatabase = FirebaseDatabase.getInstance().getReference()
+        storageReference = FirebaseStorage.getInstance().getReference("uploads")
         storage = FirebaseStorage.getInstance()
 
         //sender ID & receiver ID
@@ -111,9 +116,9 @@ class ChatActivity : AppCompatActivity() {
             val messageObject = ChatModel(message, senderUid, type = "msg")
 
             if (message == "") {
-
                 messageEditText.setError("Enter message")
             } else {
+                //Store chat message into firebase realtime database
                 firebaseDatabase.child("chats").child(senderRoom!!).child("messages").push()
                     .setValue(messageObject).addOnSuccessListener {
                         firebaseDatabase.child("chats").child(receiverRoom!!).child("messages")
@@ -130,15 +135,30 @@ class ChatActivity : AppCompatActivity() {
 
     }
 
+
+    //After selecting image from gallery
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 25) {
 //            Toast.makeText(this,"IMAGE SENT ",Toast.LENGTH_SHORT).show()
             if (data != null) {
-
                 if (data.data != null) {
+                    //store image uri into selectedImage
                     val selectedImage = data.data
 
+                    //For store image into firebase storage
+                    val fileReference : StorageReference = storageReference.child(""+System.currentTimeMillis()+"."+getFileExtension(selectedImage!!))
+
+                    fileReference.putFile(selectedImage).addOnSuccessListener {
+                        Toast.makeText(this,"SUCCESS",Toast.LENGTH_SHORT).show()
+                    }.addOnFailureListener {e->
+                        Toast.makeText(this,"ON FAIL"+e.message,Toast.LENGTH_SHORT).show()
+                        Log.d("image",""+e.message)
+                    }.addOnProgressListener {
+                        Toast.makeText(this,"ON PROGRESS",Toast.LENGTH_SHORT).show()
+                    }
+
+                    //To store chat image into firebase realtime database
                     val message = messageEditText.text.toString()
                     val messageObject = ChatModel(message, senderUid,selectedImage.toString(),"img")
 
@@ -150,9 +170,34 @@ class ChatActivity : AppCompatActivity() {
                                     Toast.makeText(this, "IMAGE SENT SUCCESSFUL", Toast.LENGTH_SHORT).show()
                                 }
                         }
+
+                    firebaseDatabase = FirebaseDatabase.getInstance().getReference("uploads")
+                    firebaseDatabase.addValueEventListener(object :ValueEventListener{
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            for(postSnapshot in snapshot.children){
+                                val image = postSnapshot.getValue(ChatModel::class.java)
+                                list.add(image!!)
+                            }
+                            adapter.notifyDataSetChanged()
+
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+
+                        }
+
+                    })
+
                 }
             }
         }
+    }
+
+   private fun getFileExtension(uri:Uri):String{
+       val contentResolver = getContentResolver()
+       val mime = MimeTypeMap.getSingleton()
+       return mime.getExtensionFromMimeType(contentResolver.getType(uri)).toString()
+
     }
 
 //    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -227,6 +272,8 @@ class ChatActivity : AppCompatActivity() {
 //    }
 
 }
+
+
 //send.setOnClickListener{
 //    if (messageEditText.text.isEmpty()){
 //        messageEditText.setError("Enter message")

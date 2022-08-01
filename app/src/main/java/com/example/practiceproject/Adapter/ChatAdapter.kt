@@ -38,11 +38,11 @@ class ChatAdapter(var context: Context,var list:ArrayList<ChatModel>):RecyclerVi
 
     override fun getItemViewType(position: Int): Int {
         val currentMessage = list[position]
-         if (FirebaseAuth.getInstance().currentUser?.uid.equals(currentMessage.senderId)){
-             return SENT_ITEM
-         } else{
-             return RECEIVE_ITEM
-         }
+        return if (FirebaseAuth.getInstance().currentUser?.uid.equals(currentMessage.senderId)){
+            SENT_ITEM
+        } else{
+            RECEIVE_ITEM
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -50,7 +50,13 @@ class ChatAdapter(var context: Context,var list:ArrayList<ChatModel>):RecyclerVi
 
         if (holder.javaClass == SenderViewHolder::class.java){
             val viewHolder  = holder as SenderViewHolder
-            if (message.type == "img" ){
+            if (message.type == "msg" ){
+
+                viewHolder.sendImage.visibility = View.GONE
+                viewHolder.sendMessage.visibility = View.VISIBLE
+                viewHolder.sendMessage.text = message.message
+
+            }else{
                 viewHolder.sendMessage.visibility = View.GONE
                 viewHolder.sendImage.visibility = View.VISIBLE
                 Glide.with(context)
@@ -58,15 +64,15 @@ class ChatAdapter(var context: Context,var list:ArrayList<ChatModel>):RecyclerVi
                     .placeholder(R.drawable.placeholder)
                     .into(viewHolder.sendImage)
 //                Glide.with(holder.image.context).load(model.postImage).centerCrop().into(holder.image)
-            }else{
-                viewHolder.sendImage.visibility = View.GONE
-                viewHolder.sendMessage.visibility = View.VISIBLE
-                viewHolder.sendMessage.text = message.message
             }
 
         }else{
             val viewHolder  = holder as ReceiverViewHolder
-            if (message.type == "img"){
+            if (message.type == "msg"){
+                viewHolder.receiveImage.visibility = View.GONE
+                viewHolder.receiveMessage.visibility = View.VISIBLE
+                viewHolder.receiveMessage.text = message.message
+            }else{
                 viewHolder.receiveMessage.visibility = View.GONE
                 viewHolder.receiveImage.visibility = View.VISIBLE
                 Glide.with(context)
@@ -75,11 +81,6 @@ class ChatAdapter(var context: Context,var list:ArrayList<ChatModel>):RecyclerVi
                     .placeholder(R.drawable.placeholder)
                     .into(viewHolder.receiveImage)
 //                Glide.with(holder.image.context).load(model.postImage).centerCrop().into(holder.image)
-
-            }else{
-                viewHolder.receiveImage.visibility = View.GONE
-                viewHolder.receiveMessage.visibility = View.VISIBLE
-                viewHolder.receiveMessage.text = message.message
             }
         }
     }
