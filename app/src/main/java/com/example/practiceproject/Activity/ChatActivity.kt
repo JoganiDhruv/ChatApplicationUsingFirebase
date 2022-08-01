@@ -55,8 +55,6 @@ class ChatActivity : AppCompatActivity() {
         backButton = findViewById(R.id.chat_backButton)
         attachFile = findViewById(R.id.attach_file)
 
-
-
         firebaseAuth = FirebaseAuth.getInstance()
         firebaseDatabase = FirebaseDatabase.getInstance().getReference()
         storage = FirebaseStorage.getInstance()
