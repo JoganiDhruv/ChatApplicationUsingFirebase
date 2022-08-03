@@ -67,7 +67,6 @@ class HomeFragment : Fragment(), IPostAdapter {
 //
 //    }
 
-
     private fun setRecyclerView() {
         val postCollection = postDao.postCollections
         val qurey = postCollection.orderBy("createdAt",Query.Direction.DESCENDING)

@@ -2,14 +2,13 @@ package com.example.practiceproject.Activity
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.webkit.MimeTypeMap
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.practiceproject.Adapter.ChatAdapter
@@ -20,9 +19,6 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.math.log
 
 class ChatActivity : AppCompatActivity() {
 
@@ -47,6 +43,8 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var adapter: ChatAdapter
 
     private lateinit var attachFile: ImageView
+    private lateinit var camera: ImageView
+    private lateinit var relativeLayout: RelativeLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,11 +56,63 @@ class ChatActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.chat_screen_recyclerview)
         backButton = findViewById(R.id.chat_backButton)
         attachFile = findViewById(R.id.attach_file)
+        camera = findViewById(R.id.camera)
+        relativeLayout = findViewById(R.id.container_fragment)
 
         firebaseAuth = FirebaseAuth.getInstance()
         firebaseDatabase = FirebaseDatabase.getInstance().getReference()
         storageReference = FirebaseStorage.getInstance().getReference("uploads")
         storage = FirebaseStorage.getInstance()
+
+        camera.setOnClickListener {
+
+            val mapFragment = MapFragment()
+            val fragment : Fragment? = supportFragmentManager.findFragmentByTag(MapFragment::class.java.simpleName)
+
+            if (fragment !is MapFragment){
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.container_fragment,mapFragment,MapFragment::class.java.simpleName)
+                    .commit()
+                relativeLayout.visibility = View.GONE
+            }
+
+        }
+
+        storageReference.child("uploads/androidparty.png").downloadUrl.addOnSuccessListener {
+            // Got the download URL for 'users/me/profile.png'
+
+            Toast.makeText(this,"DOWNLOAD SUCCESS",Toast.LENGTH_SHORT).show()
+
+        }.addOnFailureListener {
+            // Handle any errors
+            Toast.makeText(this,"DOWNLOAD FAIL",Toast.LENGTH_SHORT).show()
+
+        }
+
+
+
+//        // Create a storage reference from our app
+//        val storageRef = storage!!.reference
+//
+//// Create a reference with an initial file path and name
+//        val pathReference = storageRef.child("uploads")
+//
+//// Create a reference to a file from a Google Cloud Storage URI
+//        val gsReference = storage.getReferenceFromUrl("uploads/androidparty.png").downloadUrl.addOnSuccessListener{
+//            Toast.makeText(this,"DOWNLOAD SUCCESS",Toast.LENGTH_SHORT).show()
+//        }.addOnFailureListener{
+//            Toast.makeText(this,"DOWNLOAD FAIL",Toast.LENGTH_SHORT).show()
+//        }
+
+// Create a reference from an HTTPS URL
+// Note that in the URL, characters are URL escaped!
+//        val httpsReference = storage!!.getReferenceFromUrl(
+//            "https://firebasestorage.googleapis.com/b/bucket/o/images%20stars.jpg")
+
+
+
+
+
 
         //sender ID & receiver ID
         senderUid = firebaseAuth.currentUser?.uid.toString()
@@ -146,10 +196,11 @@ class ChatActivity : AppCompatActivity() {
                     //store image uri into selectedImage
                     val selectedImage = data.data
 
+
                     //For store image into firebase storage
                     val fileReference : StorageReference = storageReference.child(""+System.currentTimeMillis()+"."+getFileExtension(selectedImage!!))
 
-                    fileReference.putFile(selectedImage).addOnSuccessListener {
+                    fileReference.putFile(selectedImage!!).addOnSuccessListener {
                         Toast.makeText(this,"SUCCESS",Toast.LENGTH_SHORT).show()
                     }.addOnFailureListener {e->
                         Toast.makeText(this,"ON FAIL"+e.message,Toast.LENGTH_SHORT).show()
@@ -171,22 +222,23 @@ class ChatActivity : AppCompatActivity() {
                                 }
                         }
 
-                    firebaseDatabase = FirebaseDatabase.getInstance().getReference("uploads")
-                    firebaseDatabase.addValueEventListener(object :ValueEventListener{
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            for(postSnapshot in snapshot.children){
-                                val image = postSnapshot.getValue(ChatModel::class.java)
-                                list.add(image!!)
-                            }
-                            adapter.notifyDataSetChanged()
+//                    firebaseDatabase = FirebaseDatabase.getInstance().getReference("uploads")
+//                    firebaseDatabase.addValueEventListener(object :ValueEventListener{
+//                        override fun onDataChange(snapshot: DataSnapshot) {
+//                            for(postSnapshot in snapshot.children){
+//                                val image = postSnapshot.getValue(ChatModel::class.java)
+//                                list.add(image!!)
+//                            }
+//                            adapter.notifyDataSetChanged()
+//
+//                        }
+//
+//                        override fun onCancelled(error: DatabaseError) {
+//
+//                        }
+//
+//                    })
 
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-
-                        }
-
-                    })
 
                 }
             }

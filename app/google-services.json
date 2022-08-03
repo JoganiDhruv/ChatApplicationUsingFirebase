@@ -34,6 +34,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:246994707461:android:b0b60d2cebf930a0ca686c",
+        "android_client_info": {
+          "package_name": "com.example.quotesdiary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "246994707461-7ka7fbcqdtkf7a0qtlqamqpijdnhrask.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjWN2usUGa6nQTwfMAVgrEz5URci2Jyag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "246994707461-7ka7fbcqdtkf7a0qtlqamqpijdnhrask.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
