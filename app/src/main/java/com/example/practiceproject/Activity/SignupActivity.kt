@@ -3,6 +3,7 @@ package com.example.practiceproject.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.WindowManager
 import android.widget.*
@@ -10,6 +11,8 @@ import com.example.practiceproject.Daos.UserDao
 import com.example.practiceproject.Model.GroupModel
 import com.example.practiceproject.Models.UserModel
 import com.example.practiceproject.R
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -25,6 +28,9 @@ class SignupActivity : AppCompatActivity() {
     private lateinit var usernameEdittext: EditText
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var databaseRef : DatabaseReference
+
+    private val REQ_ONE_TAP = 2  // Can be any integer unique to the Activity
+    private var showOneTapUI = true
 
 
     private  lateinit var signUpWithGoogle : RelativeLayout
@@ -47,14 +53,30 @@ class SignupActivity : AppCompatActivity() {
 
         firebaseAuth= FirebaseAuth.getInstance()
 
+
         signupButton.setOnClickListener {
             signup()
+        }
+
+        signUpWithGoogle.setOnClickListener{
+
         }
 
         loginText.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
+
+       val signInRequest = BeginSignInRequest.builder()
+            .setGoogleIdTokenRequestOptions(
+                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                    .setSupported(true)
+                    // Your server's client ID, not your Android client ID.
+                    .setServerClientId(getString(R.string.default_web_client_id))
+                    // Only show accounts previously used to sign in.
+                    .setFilterByAuthorizedAccounts(true)
+                    .build())
+            .build()
 
 //        signInRequest = BeginSignInRequest.builder()
 //            .setGoogleIdTokenRequestOptions(
@@ -66,6 +88,11 @@ class SignupActivity : AppCompatActivity() {
 //                    .setFilterByAuthorizedAccounts(true)
 //                    .build())
 //            .build()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
     }
 
     private fun signup() {
